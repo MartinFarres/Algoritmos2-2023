@@ -104,16 +104,31 @@ def reBalance_R(tree, node):
 # Ejercicio 4
 
 
+def updateBalance(tree, node):
+    updateBalance_R(node)
+    return tree
+
+
+def updateBalance_R(node):
+    if node == None:
+        return
+    node.bf = height(node.leftnode) - height(node.rightnode)
+    updateBalance_R(node.parent)
+
+
 def insert(B, element, key):
     current = B.root
     newNode = AVLNode()
     newNode.key = key
     newNode.value = element
+    newNode.bf = 0
     if current == None:
         B.root = newNode
         return key
     insertR(newNode, B.root)
-    reBalance(B)
+    if newNode.parent != None:
+        reBalanceInsDel(B, newNode)
+    updateBalance(B, current)
 
 
 def insertR(newNode, current):
@@ -133,9 +148,32 @@ def insertR(newNode, current):
         return None
 
 
+def reBalanceInsDel(tree, node):
+    if node == None:
+        return
+    if node.bf > 1:
+        if node.leftnode.bf < 0:
+            rotateLeft(tree, node.leftnode)
+            node = rotateRight(tree, node)
+        else:
+            node = rotateRight(tree, node)
+        updateBalance(tree, node)
+    elif node.bf < -1:
+        if node.rightnode.bf > 0:
+            rotateRight(tree, node.rightnode)
+            node = rotateLeft(tree, node)
+        else:
+            node = rotateLeft(tree, node)
+        updateBalance(tree, node)
+    reBalanceInsDel(tree, node.parent)
+
+
 # Ejercicio 5
+
+
 def delete(B, key):
     current = searchKey(B, key)
+    parentNode = current.parent
     if current == None:
         return
     if current.leftnode == None:
@@ -151,7 +189,9 @@ def delete(B, key):
         transplant(B, current, nodeMin)
         nodeMin.leftnode = current.leftnode
         nodeMin.leftnode.parent = nodeMin
-    reBalance(B)
+    if parentNode != None:
+        reBalanceInsDel(B, parentNode)
+    updateBalance(B, current)
     return current.key
 
 # ////////////////////////////////////////////////////////////////////////////////////////
@@ -209,7 +249,6 @@ def print_tree(node, level=0):
 # /////////////////////////////////////////////////////////////////////////////////////////////////////
 # Test
 
-
 test = AVLTree()
 
 insert(test, 5, 5)
@@ -217,8 +256,10 @@ insert(test, 7, 7)
 insert(test, 10, 10)
 insert(test, 12, 12)
 insert(test, 15, 15)
-calculateBalance(test)
 print_tree(test.root)
-reBalance(test)
+print("")
+insert(test, 20, 20)
+print_tree(test.root)
+delete(test, 20)
 print("")
 print_tree(test.root)
