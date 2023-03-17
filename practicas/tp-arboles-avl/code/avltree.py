@@ -95,13 +95,6 @@ def reBalance_R(tree, node):
     reBalance_R(tree, node.leftnode)
 
 
-def print_tree(node, level=0):
-    if node is not None:
-        print_tree(node.rightnode, level+1)
-        print(' ' * 4 * level + '->', node.key, f"(bf={node.bf})")
-        print_tree(node.leftnode, level+1)
-
-
 def insert(B, element, key):
     current = B.root
     newNode = AVLNode()
@@ -111,6 +104,7 @@ def insert(B, element, key):
         B.root = newNode
         return key
     insertR(newNode, B.root)
+    reBalance(B)
 
 
 def insertR(newNode, current):
@@ -128,6 +122,75 @@ def insertR(newNode, current):
         insertR(newNode, current.leftnode)
     else:
         return None
+
+
+def deleteKey(B, key):
+    current = searchKey(B, key)
+    if current == None:
+        return
+    if current.leftnode == None:
+        transplant(B, current, current.rightnode)
+    elif current.rightnode == None:
+        transplant(B, current, current.leftnode)
+    else:
+        nodeMin = treeMin(current.rightnode)
+        if nodeMin.parent != current:
+            transplant(B, nodeMin, nodeMin.rightnode)
+            nodeMin.rightnode = current.rightnode
+            nodeMin.parent.rightnode = nodeMin
+        transplant(B, current, nodeMin)
+        nodeMin.leftnode = current.leftnode
+        nodeMin.leftnode.parent = nodeMin
+    reBalance(B)
+    return current.key
+
+
+def transplant(B, current, new):
+    # Transplanta el nodo 'Current' con el nuevo nodo 'New'
+    if current.parent == None:
+        B.root = current
+    elif current == current.parent.leftnode:
+        current.parent.leftnode = new
+    else:
+        current.parent.rightnode = new
+    if new != None:
+        new.parent = current.parent
+
+
+def treeMin(current):
+    if current.leftnode == None:
+        return current
+    else:
+        return treeMin(current.leftnode)
+
+
+def searchKey(B, key):
+    current = B.root
+    if current.key == key:
+        return current
+    if current == None:
+        return
+    return searchKeyR(current, key)
+
+
+def searchKeyR(node, key):
+    if node.key == key:
+        return node
+    if node.key > key:
+        if node.leftnode != None:
+            return searchKeyR(node.leftnode, key)
+        return
+    else:
+        if node.rightnode != None:
+            return searchKeyR(node.rightnode, key)
+        return
+
+
+def print_tree(node, level=0):
+    if node is not None:
+        print_tree(node.rightnode, level+1)
+        print(' ' * 4 * level + '->', node.key, f"(bf={node.bf})")
+        print_tree(node.leftnode, level+1)
 
 
 test = AVLTree()
