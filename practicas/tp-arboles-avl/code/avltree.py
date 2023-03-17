@@ -11,13 +11,15 @@ class AVLNode:
     bf = None
 
 
+# Ejercicio 1
+
 def rotateLeft(tree, node):
     BNode = node.rightnode
     node.rightnode = BNode.leftnode
-    if BNode.leftnode is not None:
+    if BNode.leftnode != None:
         BNode.leftnode.parent = node
     BNode.parent = node.parent
-    if node.parent is None:
+    if node.parent == None:
         tree.root = BNode
     else:
         if node.parent.rightnode == node:
@@ -32,10 +34,10 @@ def rotateLeft(tree, node):
 def rotateRight(tree, node):
     BNode = node.leftnode
     node.leftnode = BNode.rightnode
-    if BNode.rightnode is not None:
+    if BNode.rightnode != None:
         BNode.rightnode.parent = node
     BNode.parent = node.parent
-    if node.parent is None:
+    if node.parent == None:
         tree.root = BNode
     else:
         if node.parent.rightnode == node:
@@ -46,6 +48,8 @@ def rotateRight(tree, node):
     node.parent = BNode
     return BNode
 
+
+# Ejercicio 2
 
 def calculateBalance(tree):
     calculateBalance_R(tree.root)
@@ -66,6 +70,9 @@ def height(node):
     rightH = height(node.rightnode)
     leftH = height(node.leftnode)
     return max(rightH, leftH) + 1
+
+
+# Ejercicio 3
 
 
 def reBalance(tree):
@@ -93,6 +100,8 @@ def reBalance_R(tree, node):
         calculateBalance(tree)
     reBalance_R(tree, node.rightnode)
     reBalance_R(tree, node.leftnode)
+
+# Ejercicio 4
 
 
 def insert(B, element, key):
@@ -124,7 +133,8 @@ def insertR(newNode, current):
         return None
 
 
-def deleteKey(B, key):
+# Ejercicio 5
+def delete(B, key):
     current = searchKey(B, key)
     if current == None:
         return
@@ -143,6 +153,9 @@ def deleteKey(B, key):
         nodeMin.leftnode.parent = nodeMin
     reBalance(B)
     return current.key
+
+# ////////////////////////////////////////////////////////////////////////////////////////
+# Funciones Auxiliares
 
 
 def transplant(B, current, new):
@@ -191,6 +204,10 @@ def print_tree(node, level=0):
         print_tree(node.rightnode, level+1)
         print(' ' * 4 * level + '->', node.key, f"(bf={node.bf})")
         print_tree(node.leftnode, level+1)
+
+
+# /////////////////////////////////////////////////////////////////////////////////////////////////////
+# Test
 
 
 test = AVLTree()
