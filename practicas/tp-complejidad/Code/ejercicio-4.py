@@ -1,8 +1,6 @@
 # Implementar un algoritmo que ordene una lista de elementos donde siempre el elemento del
 # medio de la lista contiene antes que él en la lista la mitad de los elementos menores que él.
 # Explique la estrategia de ordenación utilizada.
-A = [2, 7, 6, 10, 5, 1, 4]
-
 
 def halfsort(A):
     midIndex = len(A)//2
@@ -10,7 +8,7 @@ def halfsort(A):
     # Is the Middle element capable of having //2 elements to the left or at least one element
     while A[midIndex] // 2 > len(A) // 2:
         if n == len(A):
-            return A
+            return False
         # Moves All elements to the right by one
         A = [A[-1]] + A[:-1]
         n += 1
@@ -31,4 +29,6 @@ def halfsort(A):
             listBTM.pop()
             valuesSTM += 1
         i += 1
+    if valuesSTM < A[midIndex] // 2:
+        return False
     return A
