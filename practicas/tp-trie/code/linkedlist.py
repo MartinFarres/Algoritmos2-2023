@@ -81,11 +81,25 @@ def delete(L, element):
     currentNode = L.head
     if position == 0:
         L.head = currentNode.nextNode
-        return
+        return position
     for i in range(0, position - 1):
         currentNode = currentNode.nextNode
     currentNode.nextNode = currentNode.nextNode.nextNode
     return position
+
+
+def deleteTrie(L, element):
+    position = searchTrie(L, element)
+    if position == None:
+        return False
+    currentNode = L.head
+    if position == 0:
+        L.head = currentNode.nextNode
+        return True
+    for i in range(0, position - 1):
+        currentNode = currentNode.nextNode
+    currentNode.nextNode = currentNode.nextNode.nextNode
+    return True
 
 
 def access(L, position):
@@ -196,8 +210,10 @@ def recorrerListaTrie(S):
     currentNode = S.head
     while currentNode != None:
         if (currentNode.nextNode != None):
-            print('|', currentNode.value.key, '|->', end=" ")
+            print('|', currentNode.value.key,
+                  currentNode.value.isEndOfWord, '|->', end=" ")
         else:
-            print('|', currentNode.value.key, '|-> None')
+            print('|', currentNode.value.key,
+                  currentNode.value.isEndOfWord, '|-> None')
         currentNode = currentNode.nextNode
     print('')

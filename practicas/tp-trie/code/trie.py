@@ -12,10 +12,7 @@ class TrieNode:
     isEndOfWord = False
 
 
-# Descripción: insert un elemento en T, siendo T un Trie.
-# Entrada: El Trie sobre la cual se quiere agregar el elemento (Trie)  y
-# el valor del elemento (palabra) a  agregar.
-# Salida:  No hay salida definida
+# ---------------------------------- Insert ----------------------------------------------------------
 
 def insert(T, element):
     if T.root == None:
@@ -39,33 +36,70 @@ def insert(T, element):
             newNode.isEndOfWord = True
         currentNode = newNode
 
-# search(T,element)
-# Descripción: Verifica que un elemento se encuentre dentro del Trie
-# Entrada: El Trie sobre la cual se quiere buscar el elemento (Trie)  y el valor del elemento (palabra)
-# Salida: Devuelve False o True  según se encuentre el elemento.
 
+# ---------------------------------- Search ----------------------------------------------------------
 
 def search(T, element):
     currentNode = T.root
-    searchR(currentNode, element)
+    return searchR(currentNode, element)
 
 
 def searchR(currentNode, element):
     childrenList = currentNode.children
     newNode = linkedlist.getNodeTrie(
-        childrenList, linkedlist.searchTrie(childrenList, element[i]))
+        childrenList, linkedlist.searchTrie(childrenList, element[0]))
     if newNode == False:
         return False
-    if i == len(element) and newNode.isEndOfWord == True:
+    if len(element) == 1 and newNode.isEndOfWord == True:
         return True
-    currentNode = newNode
+    element = element[1:]
+    return searchR(newNode, element)
+
+
+# ---------------------------------- Delete ----------------------------------------------------------
+
+def delete(T, element):
+    currentNode = T.root
+    nodeToDelete = [None, None]
+    # Searching and saving the last letter that is the end of a word inside the element
+    for i in range(0, len(element)):
+        childrenList = currentNode.children
+        newNode = linkedlist.getNodeTrie(
+            childrenList, linkedlist.searchTrie(childrenList, element[i]))
+        # Saving the first node to delete if no other is found
+        if i == 0:
+            nodeToDelete[0], nodeToDelete[1] = newNode, i
+        if newNode == False:
+            return False
+        # Saving node to delete if it isEndOfWord and not the last
+        if newNode.isEndOfWord == True and i != len(element):
+            nodeToDelete[0], nodeToDelete[1] = newNode, i
+        currentNode = newNode
+    # Deleting the Node
+    if newNode.children == None:  # Last Node of our elemnt has no children, we delete the whole element
+        if nodeToDelete[1] == 0:
+            linkedlist.deleteTrie(T.root.children, element[0])
+            nodeToDelete[0].children = None
+        else:
+            linkedlist.deleteTrie(
+                nodeToDelete[0].children, element[nodeToDelete[1]+1])
+            nodeToDelete[0].children = None
+    else:
+        newNode.isEndOfWord = False
+    return True
+
+# ------------------------ Search by Pattern -------------------------------------------------
+
+
+def searchPattern(T, p, n):
 
 
 test = Trie()
-insert(test, "Pero")
-insert(test, "Perro")
-print(search(test, "Perro"))
+insert(test, "Hola")
+insert(test, "Holan")
+insert(test, "Holanda")
+print(delete(test, "Hola"))
 # print(test.root.children.head.value.children.head.value.children.head.value.children.head.value.isEndOfWord)
 # print(test.root.children.head.value.children.head.value.children.head.value.children.head.value.children.head.value.children.head.value.children.head.value.isEndOfWord)
-# linkedlist.recorrerListaTrie(
-#     test.root.children.head.value.children.head.value.children.head.value.children)
+linkedlist.recorrerListaTrie(
+    test.root.children.head.value.children.head.value.children.head.value.children.head.value.children)
