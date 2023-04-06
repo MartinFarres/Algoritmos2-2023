@@ -91,15 +91,81 @@ def delete(T, element):
 # ------------------------ Search by Pattern -------------------------------------------------
 
 
-def searchPattern(T, p, n):
+def searchByPattern(T, p, n):
+    currentNode = searchPatternR(T.root, p)
+    if currentNode == False:
+        return False
+    newTree = Trie()
+    newTree.root = currentNode
+    listWords = printTrie(newTree, p)
+    listWords = [i for i in listWords if len(i) == n]
+    return listWords
+
+
+def searchPatternR(currentNode, element):
+    childrenList = currentNode.children
+    newNode = linkedlist.getNodeTrie(
+        childrenList, linkedlist.searchTrie(childrenList, element[0]))
+    if newNode == False:
+        return False
+    if len(element) == 1:
+        return newNode
+    element = element[1:]
+    return searchPatternR(newNode, element)
+
+# ------------------------ Print Words in Trie ----------------------------------------------
+
+
+def printTrie(T, pattern=""):
+    listWords = []
+    letters = "" + pattern
+    node = T.root
+    printTrieR(node.children.head, listWords, letters)
+    return listWords
+
+
+def printTrieR(listNode, listWords,  letters):
+    if listNode == None:
+        return
+    letters = letters + listNode.value.key
+    if listNode.value.isEndOfWord == True:
+        listWords.append(letters)
+    if listNode.value.children != None:
+        printTrieR(listNode.value.children.head, listWords, letters)
+        letters = letters[:-1]
+    return printTrieR(listNode.nextNode, listWords, letters)
+
+
+# ------------------------------ Tries Iguales --------------------------------------------------
+
+def triesIguales(T, P):
+    Tlist = printTrie(T)
+    Plist = printTrie(P)
+    if Tlist == Plist:
+        return True
+    return False
+
+
+# ------------------------------ Palabras Invertidas -----------------------------------------------
+
+# def palInvertidas(T):
 
 
 test = Trie()
+insert(test, "Martin")
+insert(test, "Argentina")
 insert(test, "Hola")
+insert(test, "Holapos")
 insert(test, "Holan")
 insert(test, "Holanda")
-print(delete(test, "Hola"))
-# print(test.root.children.head.value.children.head.value.children.head.value.children.head.value.isEndOfWord)
-# print(test.root.children.head.value.children.head.value.children.head.value.children.head.value.children.head.value.children.head.value.children.head.value.isEndOfWord)
-linkedlist.recorrerListaTrie(
-    test.root.children.head.value.children.head.value.children.head.value.children.head.value.children)
+
+test1 = Trie()
+insert(test1, "Hola")
+insert(test1, "Holapos")
+insert(test1, "Holan")
+insert(test1, "Argentina")
+insert(test1, "Martin")
+insert(test1, "Holanda")
+
+print(printTrie(test))
+print(printTrie(test1))
