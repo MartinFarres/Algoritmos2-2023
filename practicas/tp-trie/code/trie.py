@@ -175,23 +175,3 @@ def autofillWords(T, p):
     if len(listWords) == 1:
         return listWords[0]
     return ""
-
-
-test = Trie()
-insert(test, "Martin")
-insert(test, "Argentina")
-insert(test, "Hola")
-insert(test, "Holapos")
-insert(test, "Holan")
-insert(test, "Holanda")
-
-test1 = Trie()
-insert(test1, "Hola")
-insert(test1, "Holapos")
-insert(test1, "Holan")
-insert(test1, "Argentina")
-insert(test1, "Martin")
-insert(test1, "Holanda")
-
-print(printTrie(test))
-print(printTrie(test1))
