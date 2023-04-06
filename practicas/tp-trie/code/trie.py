@@ -138,7 +138,7 @@ def printTrieR(listNode, listWords,  letters):
 
 # ------------------------------ Tries Iguales --------------------------------------------------
 
-def triesIguales(T, P):
+def sameTries(T, P):
     Tlist = printTrie(T)
     Plist = printTrie(P)
     if Tlist == Plist:
@@ -148,7 +148,33 @@ def triesIguales(T, P):
 
 # ------------------------------ Palabras Invertidas -----------------------------------------------
 
-# def palInvertidas(T):
+def reversWords(T):
+    allWords = printTrie(T)
+    currentNode = allWords.head
+    nextNode = allWords.head.nextNode
+
+    while nextNode != None and currentNode != None:
+        if (currentNode.value == nextNode.value[::-1]):
+            return True
+        nextNode = nextNode.nextNode
+        if (nextNode == None):
+            currentNode = currentNode.nextNode
+            nextNode = currentNode
+    return False
+
+
+# ----------------------------- Auto Completar Palabras ---------------------------------------
+
+def autofillWords(T, p):
+    currentNode = searchPatternR(T, p)
+    if currentNode == False:
+        return ""
+    newTree = Trie()
+    newTree.root = currentNode
+    listWords = printTrie(newTree, p)
+    if len(listWords) == 1:
+        return listWords[0]
+    return ""
 
 
 test = Trie()
