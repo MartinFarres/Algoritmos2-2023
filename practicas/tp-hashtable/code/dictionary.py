@@ -1,6 +1,3 @@
-import linkedlist as ld
-
-
 class Dictionary:
     slots = None
 
@@ -65,10 +62,39 @@ def isPermutationSTR(S, P):
     return True
 
 
-def uniqueKeys(D):
-    for i in range(0, len(D.slots)):
-        res = True
-        for i in range(0, len(D.slots[i])):
+def uniqueKeys(arr):
+    D = Dictionary(len(arr), hashFMod)
+    for i in arr:
+        res = search(D, i)
+        insert(D, i, i)
+        if res != None:
+            return True
+    return False
+
+
+def strCompression(S):
+    S.lower()
+    D = Dictionary(26, hashFAscii)
+    k = S[0]
+    count = 0
+    j = 0
+    for i in range(0, len(S)):
+        if S[i] != k or i == len(S)-1:
+            insert(D, S[i-1], (j, count))
+            k = S[i]
+            count = 1
+            j += 1
+        else:
+            count += 1
+    res = [None] * (j)
+    for i in D.slots:
+        if i != []:
+            for n in i:
+                res[n.value[0]] = f"{n.key}{n.value[1]}"
+    res = "".join(res)
+    if len(res) < len(S):
+        return res
+    return S
 
 
 def printHT(D):
@@ -76,7 +102,8 @@ def printHT(D):
         if D.slots[i] == None:
             print("||", i, "|| ---> ", D.slots[i], end=" ")
         else:
-            print("||", i, "|| ---> ", [i.key for i in D.slots[i]], end=" ")
+            print("||", i, "|| ---> ",
+                  [f"{i.key}, {i.value[0]}, {i.value[1]}" for i in D.slots[i]], end=" ")
         print("")
 
 
@@ -88,12 +115,23 @@ def hashFMod(k, m):
 
 
 def hashFAscii(k, m):
-    d = {chr(i+97): i for i in range(0, 26)}
-    return d[k]
+    return ord(k)-97
+
+
+def hashFPostalCode(k, m):
+    k0 = 0
+    for i in k:
+        if isinstance(i, int) == True:
+            k0 = k0 + i
+        else:
+            k0 = k0 + ord(i)
+    return (k0 % m)
 
 
 # --------------------------------------------------Test--------------------------------------------
 # Ejercicio 1 & 2
+
+
 def testEj1_2():
     dic = Dictionary(9, hashFMod)
     insert(dic, 5, 5)
@@ -111,8 +149,18 @@ def testEj1_2():
 # Ejercicio 4
 def testEj4():
     s = "hola"
-    p = "ohpa"
+    p = "ohla"
     print(isPermutationSTR(s, p))
 
 
-testEj4()
+def testEj5():
+    a = [1, 5, 12, 1, 2]
+    print(uniqueKeys(a))
+
+
+def testEj7():
+    s = "aabcccccaaa"
+    print(strCompression(s))
+
+
+testEj7()
