@@ -35,7 +35,7 @@ def search(D, key):
     for i in keyList:
         if i.key == key:
             return i.key
-    return
+    return False
 
 
 def delete(D, key):
@@ -97,13 +97,59 @@ def strCompression(S):
     return S
 
 
+# Rabin-Karp Algorythm
+# Complejidad Temporal es de O(m*n) en el peor caso y de O(m+n) en el caso promedio
+# d = len(conjunto) Ej: d=26 en el conjunto de abecedario
+def patterMatching(pattern, text, d):
+    m = len(pattern)
+    n = len(text)
+    p = 0
+    t = 0
+
+    # Calculate hash value for pattern and first text itter of len n
+    for i in range(m):
+        p = (d*p + hashFAscii(pattern[i], 0)) % 13
+        t = (d*t + hashFAscii(text[i], 0)) % 13
+
+    # Finding the match
+    matched = True
+    for i in range(n-m+1):
+        if p == t:  # Same hash values
+            for j in range(m):
+                if text[i+j] != pattern[j]:
+                    matched = False
+            if matched:
+                return i + 1
+        if i < n-m:  # Recalculate Hash value for next text itter
+            for j in range(m):
+                t = (d*t + hashFAscii(text[j+i], 0)) % 13
+    return False
+
+
+def isSubset(subSet, t):
+    dic = Dictionary(nearest_prime(len(t)), hashFMod)
+    for i in t:
+        insert(dic, i, i)
+    for i in subSet:
+        if search(dic, i) == False:
+            return False
+    return True
+
+
+def nearest_prime(n):
+    if n <= 1:
+        return 2
+    for i in range(n, 2*n):
+        if all(i % j != 0 for j in range(2, int(i**0.5)+1)):
+            return i
+
+
 def printHT(D):
     for i in range(len(D.slots)):
         if D.slots[i] == None:
             print("||", i, "|| ---> ", D.slots[i], end=" ")
         else:
-            print("||", i, "|| ---> ",
-                  [f"{i.key}, {i.value[0]}, {i.value[1]}" for i in D.slots[i]], end=" ")
+            print("||", i, "|| ---> ", [i.key for i in D.slots[i]], end=" ")
         print("")
 
 
@@ -129,8 +175,6 @@ def hashFPostalCode(k, m):
 
 
 # --------------------------------------------------Test--------------------------------------------
-# Ejercicio 1 & 2
-
 
 def testEj1_2():
     dic = Dictionary(9, hashFMod)
@@ -143,10 +187,10 @@ def testEj1_2():
     insert(dic, 12, 12)
     insert(dic, 17, 17)
     insert(dic, 10, 10)
+    printHT(dic)
     print(search(dic, 20))
 
 
-# Ejercicio 4
 def testEj4():
     s = "hola"
     p = "ohla"
@@ -163,4 +207,21 @@ def testEj7():
     print(strCompression(s))
 
 
-testEj7()
+def testEj8():
+    text = "ABCCDDAEFG"
+    pattern = "CDD"
+    print(patterMatching(pattern, text))
+
+
+def testEj9():
+    t = [5, 8, 3, 9, 1, 2]
+    subset = [5, 3, 2]
+    print(t, subset)
+    print(isSubset(subset, t))
+    t = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    subset = [5, 3, 12]
+    print(t, subset)
+    print(isSubset(subset, t))
+
+
+testEj1_2()
