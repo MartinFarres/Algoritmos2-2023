@@ -5,7 +5,7 @@ class Node:
         self.flag1 = flag1
 
 
-class G:
+class Graph:
     slots = None
     dic = {}
 
@@ -52,7 +52,7 @@ def isTree(G):
     visited = {vertex: False for vertex in G.vertices}
     startNode = G.vertices[0]
 
-    if not dfs(G, startNode, visited):
+    if isCyclic(G, startNode, visited):
         return False
 
     for vertex in G.vertices:
@@ -71,19 +71,6 @@ def isConnected(G):
 
     for vertex in G.vertices:
         if not visited[vertex]:
-            return False
-
-    return True
-
-
-def dfs(G, vertex, visited, parent=None):
-    visited[vertex] = True
-
-    for adjacentNode in G.slots[G.dic[vertex].pos]:
-        if not visited[adjacentNode.vertex]:
-            if not dfs(G, adjacentNode.vertex, visited, vertex):
-                return False
-        elif adjacentNode.vertex != parent:
             return False
 
     return True
@@ -129,7 +116,21 @@ def convertTree(G):
     return edgesToDelete
 
 
+def countConnections(G):
+    visited = {vertex: False for vertex in G.vertices}
+    cc = 1
+    dfs(G, G.vertices[0], visited)
+    for vertex, visit in visited.items():
+        if visit == False:
+            dfs(G, vertex, visited)
+            cc += 1
+
+    return cc
+
+
 # ------------------------------------ Auxiliar Functions  ---------------------------------
+
+
 def printGP(G):
     for i in range(len(G.slots)):
         if G.slots[i] == None:
@@ -140,9 +141,29 @@ def printGP(G):
         print("")
 
 
-# ------------------------------------ Test ---------------------------------
-vertex = [1, 2, 3, 4]
-edges = [[1, 2], [1, 3], [2, 3], [2, 4], [3, 4]]
+def dfs(G, vertex, visited):
+    if not visited[vertex]:
+        visited[vertex] = True
+        for adjVertex in G.slots[G.dic[vertex].pos]:
+            dfs(G, adjVertex.vertex, visited)
 
-test = G(vertex, edges)
-print(convertTree(test))
+
+def isCyclic(G, vertex, visited, parent=None):
+    visited[vertex] = True
+
+    for adjacentNode in G.slots[G.dic[vertex].pos]:
+        adjacentNode = adjacentNode.vertex
+        if visited[adjacentNode] == False:
+            if isCyclic(G, adjacentNode, visited, vertex):
+                return True
+        elif adjacentNode != parent:
+            return True
+    return False
+
+
+# ------------------------------------ Test ---------------------------------
+vertex = [1, 2, 3, 4, 5, 6, 7]
+edges = [[1, 2], [1, 3], [2, 4], [7, 5]]
+
+test = Graph(vertex, edges)
+print(countConnections(test))
